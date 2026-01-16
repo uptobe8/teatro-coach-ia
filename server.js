@@ -32,9 +32,14 @@ app.post('/api/upload-script', upload.single('script'), async (req, res) => {
       return res.status(400).json({ error: 'No se proporcionó archivo' });
     }
 
-    const pdfData = await pdfParse(req.file.buffer);
-    const text = pdfData.text;
+    const pdfData = await pdfParse(req.file.buffer, {
+      max: 0, // Process all pages
+    });
+    const text = pdfData.text
 
+        
+    // Log extracted text length for debugging
+    console.log('PDF text length:', text.length, 'characters');
     // Parsear el guion
     const lines = text.split('\n').filter(line => line.trim());
     const characters = new Set();
