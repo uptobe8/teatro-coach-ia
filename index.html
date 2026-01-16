@@ -3,137 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎭 Teatro Coach IA - Ensayo Teatral Inteligente</title>
+    <title>🎭 Teatro Coach IA</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #fff;
             padding: 20px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeIn 0.8s ease-in;
-        }
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .header p { opacity: 0.9; font-size: 1.1em; }
-        .status-badge {
-            display: inline-block;
-            background: rgba(76, 175, 80, 0.3);
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin: 10px 0;
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        .modes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .mode-card {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            padding: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            text-align: center;
-        }
-        .mode-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-        }
-        .mode-card.active {
-            border-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.2);
-        }
-        .mode-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            display: block;
-        }
-        .mode-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .mode-desc {
-            opacity: 0.8;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-        .rehearsal-section {
+        h1 { text-align: center; margin-bottom: 30px; }
+        .upload-section {
             background: rgba(0,0,0,0.2);
             border-radius: 15px;
             padding: 30px;
-            margin-top: 30px;
-            display: none;
+            margin-bottom: 20px;
         }
-        .rehearsal-section.active { display: block; animation: slideIn 0.5s ease; }
-        .voice-button {
-            width: 120px;
-            height: 120px;
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        textarea::placeholder { color: rgba(255,255,255,0.6); }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .btn-start:hover { background: #45a049; transform: translateY(-2px); }
+        .rehearsal-section {
+            display: none;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 30px;
+        }
+        .rehearsal-section.active { display: block; }
+        .line {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .line strong { color: #FFD700; }
+        .voice-btn {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: linear-gradient(145deg, #f093fb 0%, #f5576c 100%);
             border: none;
-            color: white;
-            font-size: 3em;
+            font-size: 40px;
             cursor: pointer;
-            margin: 20px auto;
             display: block;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+            margin: 20px auto;
+            transition: all 0.3s;
         }
-        .voice-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.6);
-        }
-        .voice-button.recording {
+        .voice-btn:hover { transform: scale(1.1); }
+        .voice-btn.recording {
             animation: pulse 1.5s infinite;
-            background: linear-gradient(145deg, #ff0844 0%, #ff5252 100%);
-        }
-        .script-area {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            min-height: 150px;
-            font-size: 1.1em;
-            line-height: 1.8;
-        }
-        .feedback {
-            background: rgba(255, 235, 59, 0.2);
-            border-left: 4px solid #FFEB3B;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+            background: #ff0844;
         }
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
@@ -141,105 +95,63 @@
         }
         .controls {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            gap: 10px;
             margin-top: 20px;
         }
-        .btn {
-            padding: 12px 30px;
-            border-radius: 25px;
-            border: none;
-            font-size: 1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.2);
+        .controls button {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
             color: white;
-            font-weight: 500;
         }
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+        .controls button:hover { background: rgba(255,255,255,0.3); }
+        .transcription {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
         }
+        .transcription.show { display: block; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎭 Teatro Coach IA</h1>
-        <p>Tu asistente inteligente para ensayos teatrales por voz</p>
-        <div class="status-badge">✓ IA Conectada</div>
-    </div>
-
     <div class="container">
-        <h2 style="text-align: center; margin-bottom: 30px;">Selecciona tu modo de ensayo</h2>
+        <h1>🎭 Teatro Coach IA</h1>
         
-        <div class="modes-grid">
-            <div class="mode-card" onclick="selectMode('voice')">
-                <span class="mode-icon">🎤</span>
-                <div class="mode-title">Ensayo por Voz</div>
-                <div class="mode-desc">Sistema hands-free con reconocimiento de voz</div>
-            </div>
-            
-            <div class="mode-card" onclick="selectMode('ai')">
-                <span class="mode-icon">🤖</span>
-                <div class="mode-title">IA Avanzada</div>
-                <div class="mode-desc">Conversaciones realistas con OpenAI</div>
-            </div>
-            
-            <div class="mode-card" onclick="selectMode('modes')">
-                <span class="mode-icon">📚</span>
-                <div class="mode-title">Modos de Ensayo</div>
-                <div class="mode-desc">Escena completa, réplicas, timing, impro</div>
-            </div>
-            
-            <div class="mode-card" onclick="selectMode('scripts')">
-                <span class="mode-icon">📄</span>
-                <div class="mode-title">Gestión de Obras</div>
-                <div class="mode-desc">Sube y organiza tus guiones PDF</div>
-            </div>
-            
-            <div class="mode-card" onclick="selectMode('feedback')">
-                <span class="mode-icon">💬</span>
-                <div class="mode-title">Feedback Inteligente</div>
-                <div class="mode-desc">Correcciones de texto en tiempo real</div>
-            </div>
-            
-            <div class="mode-card" onclick="selectMode('direction')">
-                <span class="mode-icon">🎯</span>
-                <div class="mode-title">Dirección Artística</div>
-                <div class="mode-desc">Análisis de intención y objetivos</div>
-            </div>
+        <div class="upload-section" id="uploadSection">
+            <h2>1. Pega tu guión de teatro</h2>
+            <p style="margin: 15px 0; opacity: 0.9;">Pega el texto de tu obra. Formato: PERSONAJE: "diálogo"</p>
+            <textarea id="scriptInput" placeholder='Ejemplo:&#10;ROMEO: "¡Oh, ella enseña a las antorchas a arder con brillo!"&#10;JULIETA: "Romeo, Romeo, ¿por qué eres tú Romeo?"'></textarea>
+            <button class="btn-start" onclick="startRehearsal()">▶️ Empezar Ensayo</button>
         </div>
 
-        <div id="rehearsal" class="rehearsal-section">
-            <h3 style="text-align: center; margin-bottom: 20px;">Ensayo por Voz - Romeo y Julieta</h3>
+        <div class="rehearsal-section" id="rehearsalSection">
+            <h2>2. Ensaya tu parte</h2>
+            <div class="line" id="currentLine"></div>
             
-            <div class="script-area" id="scriptArea">
-                <strong>ROMEO:</strong> "¡Oh, ella enseña a las antorchas a arder con brillo!"
-                <br><br>
-                <em style="opacity: 0.7;">Pulsa el botón del micrófono para comenzar tu ensayo...</em>
-            </div>
+            <button class="voice-btn" id="voiceBtn" onclick="toggleRecording()">🎤</button>
             
-            <button class="voice-button" id="voiceBtn" onclick="toggleRecording()">🎤</button>
-            
-            <div id="feedback" style="display: none;" class="feedback">
-                <strong>💡 Feedback de IA:</strong>
-                <p>Excelente entonación. Intenta proyectar más la voz en la segunda mitad de la frase.</p>
+            <div class="transcription" id="transcription">
+                <strong>Tu grabación:</strong>
+                <p id="transcriptText"></p>
             </div>
             
             <div class="controls">
-                <button class="btn" onclick="restart()">🔄 Reiniciar</button>
-                <button class="btn" onclick="playBack()">▶️ Escuchar</button>
-                <button class="btn" onclick="next()">➡️ Siguiente</button>
+                <button onclick="previousLine()">⬅️ Anterior</button>
+                <button onclick="nextLine()">➡️ Siguiente</button>
+                <button onclick="resetRehearsal()">🔄 Reiniciar</button>
             </div>
         </div>
     </div>
 
     <script>
-        let recording = false;
-        let currentMode = null;
+        let scriptLines = [];
+        let currentLineIndex = 0;
         let recognition = null;
+        let recording = false;
 
-        // Initialize Speech Recognition if available
+        // Initialize Speech Recognition
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -249,83 +161,94 @@
 
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
-                document.getElementById('scriptArea').innerHTML += `
-                    <br><br><strong style="color: #4CAF50;">TÚ:</strong> "${transcript}"
-                `;
-                document.getElementById('feedback').style.display = 'block';
+                document.getElementById('transcriptText').textContent = '"' + transcript + '"';
+                document.getElementById('transcription').classList.add('show');
             };
 
             recognition.onerror = function(event) {
-                console.log('Error de reconocimiento:', event.error);
+                alert('Error de reconocimiento de voz. Asegúrate de dar permiso al micrófono.');
+            };
+
+            recognition.onend = function() {
+                document.getElementById('voiceBtn').classList.remove('recording');
+                recording = false;
             };
         }
 
-        function selectMode(mode) {
-            // Remove active class from all cards
-            document.querySelectorAll('.mode-card').forEach(card => {
-                card.classList.remove('active');
-            });
+        function startRehearsal() {
+            const scriptText = document.getElementById('scriptInput').value.trim();
             
-            // Add active class to selected card
-            event.currentTarget.classList.add('active');
-            currentMode = mode;
-            
-            // Show rehearsal section for voice mode
-            if (mode === 'voice') {
-                document.getElementById('rehearsal').classList.add('active');
-            } else {
-                document.getElementById('rehearsal').classList.remove('active');
-                alert(`Modo "${event.currentTarget.querySelector('.mode-title').textContent}" activado. Esta es una demo - en producción tendría funcionalidad completa.`);
+            if (!scriptText) {
+                alert('Por favor, pega tu guión primero.');
+                return;
             }
+
+            // Parse script lines
+            scriptLines = scriptText.split('\n').filter(line => line.trim());
+            
+            if (scriptLines.length === 0) {
+                alert('No se encontraron líneas en el guión.');
+                return;
+            }
+
+            currentLineIndex = 0;
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('rehearsalSection').classList.add('active');
+            showCurrentLine();
+        }
+
+        function showCurrentLine() {
+            if (currentLineIndex >= 0 && currentLineIndex < scriptLines.length) {
+                document.getElementById('currentLine').innerHTML = 
+                    '<strong>Línea ' + (currentLineIndex + 1) + ' de ' + scriptLines.length + '</strong><br><br>' +
+                    scriptLines[currentLineIndex];
+            }
+            document.getElementById('transcription').classList.remove('show');
         }
 
         function toggleRecording() {
-            const btn = document.getElementById('voiceBtn');
-            
             if (!recognition) {
                 alert('Tu navegador no soporta reconocimiento de voz. Usa Chrome o Edge.');
                 return;
             }
 
             if (!recording) {
-                btn.classList.add('recording');
-                btn.textContent = '⏹️';
+                document.getElementById('voiceBtn').classList.add('recording');
                 recording = true;
-                recognition.start();
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log('Recognition already started');
+                }
             } else {
-                btn.classList.remove('recording');
-                btn.textContent = '🎤';
+                document.getElementById('voiceBtn').classList.remove('recording');
                 recording = false;
                 recognition.stop();
             }
         }
 
-        function restart() {
-            document.getElementById('scriptArea').innerHTML = `
-                <strong>ROMEO:</strong> "¡Oh, ella enseña a las antorchas a arder con brillo!"
-                <br><br>
-                <em style="opacity: 0.7;">Pulsa el botón del micrófono para comenzar tu ensayo...</em>
-            `;
-            document.getElementById('feedback').style.display = 'none';
-        }
-
-        function playBack() {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance("Oh, ella enseña a las antorchas a arder con brillo");
-                utterance.lang = 'es-ES';
-                speechSynthesis.speak(utterance);
-            } else {
-                alert('Reproducción de audio no disponible en este navegador.');
+        function previousLine() {
+            if (currentLineIndex > 0) {
+                currentLineIndex--;
+                showCurrentLine();
             }
         }
 
-        function next() {
-            document.getElementById('scriptArea').innerHTML = `
-                <strong>ROMEO:</strong> "Su belleza es demasiado rica para usarse, demasiado preciosa para este mundo."
-                <br><br>
-                <em style="opacity: 0.7;">Pulsa el botón del micrófono para continuar...</em>
-            `;
-            document.getElementById('feedback').style.display = 'none';
+        function nextLine() {
+            if (currentLineIndex < scriptLines.length - 1) {
+                currentLineIndex++;
+                showCurrentLine();
+            } else {
+                alert('¡Has terminado el ensayo! 🎭');
+            }
+        }
+
+        function resetRehearsal() {
+            document.getElementById('uploadSection').style.display = 'block';
+            document.getElementById('rehearsalSection').classList.remove('active');
+            document.getElementById('scriptInput').value = '';
+            scriptLines = [];
+            currentLineIndex = 0;
         }
     </script>
 </body>
