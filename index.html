@@ -35,9 +35,9 @@ select{background:rgba(255,255,255,0.9);border:none;padding:0.5rem;border-radius
 <div class="container">
 <h1>🎭 Teatro Coach IA</h1>
 <div id="step1" class="step active">
-<div class="upload-area" onclick="document.getElementById('pdfFile').click()">
+<div class="upload-area" onclick="document.getElementById('pdffile').click()">
 <p>📄 Haz clic para subir tu guion (PDF)</p>
-<input type="file" id="pdfFile" accept=".pdf">
+<input type="file" id="pdffile" accept=".pdf">
 </div>
 <div id="uploadStatus"></div>
 </div>
@@ -66,7 +66,7 @@ let isRecording=false;
 let mediaRecorder=null;
 let audioChunks=[];
 let currentLineIndex=0;
-document.getElementById('pdfFile').addEventListener('change',async(e)=>{
+document.getElementById('pdffile').addEventListener('change',async(e)=>{
 const file=e.target.files[0];
 if(!file)return;
 const status=document.getElementById('uploadStatus');
