@@ -1,1 +1,239 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>🎭 Teatro Coach IA</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.container{background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);padding:40px;max-width:600px;width:100%;text-align:center}h1{color:#667eea;margin-bottom:10px;font-size:2.5em}p{color:#666;margin-bottom:30px}.upload-area{border:3px dashed #667eea;border-radius:15px;padding:40px;margin-bottom:30px;cursor:pointer;transition:all 0.3s}.upload-area:hover{background:#f8f9ff;border-color:#764ba2}.upload-area.dragover{background:#e8ecff;border-color:#764ba2}input[type=file]{display:none}.upload-icon{font-size:4em;margin-bottom:15px}.upload-text{color:#667eea;font-size:1.2em;font-weight:600;margin-bottom:10px}.upload-hint{color:#999;font-size:0.9em}.status{margin-top:20px;padding:15px;border-radius:10px;display:none}.status.show{display:block}.status.success{background:#d4edda;color:#155724}.status.error{background:#f8d7da;color:#721c24}.status.info{background:#d1ecf1;color:#0c5460}#startBtn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;padding:15px 40px;border-radius:25px;font-size:1.1em;font-weight:600;cursor:pointer;display:none;margin-top:20px;transition:transform 0.2s}#startBtn:hover{transform:scale(1.05)}#startBtn:active{transform:scale(0.95)}.script-info{background:#f8f9ff;padding:15px;border-radius:10px;margin-top:20px;display:none}.script-info.show{display:block}.script-info h3{color:#667eea;margin-bottom:10px}.script-details{text-align:left;color:#666;font-size:0.9em}</style></head><body><div class="container"><h1>🎭 Teatro Coach IA</h1><p>Sube tu guion y ensaya con IA</p><div class="upload-area" id="uploadArea"><div class="upload-icon">📄</div><div class="upload-text">Arrastra tu guion aquí</div><div class="upload-hint">o haz clic para seleccionar (PDF o TXT)</div><input type="file" id="fileInput" accept=".pdf,.txt"></div><div class="script-info" id="scriptInfo"><h3>📋 Guion cargado</h3><div class="script-details" id="scriptDetails"></div></div><button id="startBtn">🎤 Empezar Ensayo</button><div class="status" id="status"></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const uploadArea=document.getElementById('uploadArea');const fileInput=document.getElementById('fileInput');const status=document.getElementById('status');const startBtn=document.getElementById('startBtn');const scriptInfo=document.getElementById('scriptInfo');const scriptDetails=document.getElementById('scriptDetails');let scriptData=null;function showStatus(msg,type){status.textContent=msg;status.className='status show '+type;setTimeout(()=>status.classList.remove('show'),5000)}uploadArea.addEventListener('click',()=>fileInput.click());uploadArea.addEventListener('dragover',e=>{e.preventDefault();uploadArea.classList.add('dragover')});uploadArea.addEventListener('dragleave',()=>uploadArea.classList.remove('dragover'));uploadArea.addEventListener('drop',e=>{e.preventDefault();uploadArea.classList.remove('dragover');const files=e.dataTransfer.files;if(files.length>0)handleFile(files[0])});fileInput.addEventListener('change',e=>{if(e.target.files.length>0)handleFile(e.target.files[0])});async function handleFile(file){const ext=file.name.split('.').pop().toLowerCase();if(ext!=='pdf'&&ext!=='txt'){showStatus('⚠️ Solo se aceptan archivos PDF o TXT','error');return}showStatus('📖 Leyendo guion...','info');try{let text='';if(ext==='pdf'){text=await readPDF(file)}else{text=await readText(file)}if(!text||text.trim().length<100){showStatus('⚠️ El archivo parece estar vacío o es muy corto','error');return}scriptData={name:file.name,text:text,lines:text.split('\n').filter(l=>l.trim()),characters:extractCharacters(text)};displayScriptInfo();showStatus('✅ Guion cargado correctamente','success');startBtn.style.display='block'}catch(err){console.error(err);showStatus('❌ Error al leer el archivo: '+err.message,'error')}}async function readPDF(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=async function(e){try{const pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;let fullText='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();const pageText=content.items.map(item=>item.str).join(' ');fullText+=pageText+'\n'}resolve(fullText)}catch(err){reject(err)}};reader.onerror=()=>reject(new Error('Error al leer PDF'));reader.readAsArrayBuffer(file)})}async function readText(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=e=>resolve(e.target.result);reader.onerror=()=>reject(new Error('Error al leer TXT'));reader.readAsText(file,'UTF-8')})}function extractCharacters(text){const chars=new Set();const lines=text.split('\n');lines.forEach(line=>{const match=line.match(/^([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+):/);if(match)chars.add(match[1].trim())});return Array.from(chars)}function displayScriptInfo(){scriptInfo.classList.add('show');const chars=scriptData.characters.length>0?scriptData.characters.join(', '):'No detectados';scriptDetails.innerHTML=`<strong>📄 Archivo:</strong> ${scriptData.name}<br><strong>📝 Líneas:</strong> ${scriptData.lines.length}<br><strong>🎭 Personajes:</strong> ${chars}`}startBtn.addEventListener('click',()=>{if(!scriptData){showStatus('⚠️ Primero debes cargar un guion','error');return}showStatus('🎤 Función próximamente: selección de escena y ensayo por voz','info')})</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎭 Teatro Coach IA</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff}
+.container{max-width:600px;width:90%;padding:2rem;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+h1{text-align:center;margin:0 0 2rem}
+.step{display:none}
+.step.active{display:block}
+.upload-area{border:3px dashed rgba(255,255,255,0.5);border-radius:15px;padding:3rem;text-align:center;cursor:pointer;transition:all 0.3s}
+.upload-area:hover{background:rgba(255,255,255,0.1);border-color:#fff}
+input[type=file]{display:none}
+button{background:#fff;color:#667eea;border:none;padding:1rem 2rem;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s;width:100%;margin-top:1rem}
+button:hover{transform:scale(1.05)}
+button:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.character-list{margin:1.5rem 0}
+.character-item{background:rgba(255,255,255,0.2);padding:1rem;margin:0.5rem 0;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+select{background:rgba(255,255,255,0.9);border:none;padding:0.5rem;border-radius:5px;color:#333;font-size:0.9rem}
+.rehearsal{text-align:center}
+.line-display{background:rgba(255,255,255,0.2);padding:2rem;border-radius:15px;margin:2rem 0;min-height:100px}
+.character-name{font-size:1.2rem;font-weight:700;margin-bottom:1rem}
+.dialogue{font-size:1.1rem;line-height:1.6}
+.mic-button{width:100px;height:100px;border-radius:50%;background:#ff4757;color:#fff;border:none;font-size:3rem;cursor:pointer;transition:all 0.3s;margin:2rem auto;display:block}
+.mic-button:hover{transform:scale(1.1)}
+.mic-button.recording{background:#2ed573;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.progress{margin:1rem 0;text-align:center;font-size:0.9rem}
+.info{background:rgba(255,255,255,0.2);padding:1rem;border-radius:10px;margin:1rem 0;font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎭 Teatro Coach IA</h1>
+<div id="step1" class="step active">
+<div class="upload-area" onclick="document.getElementById('pdfFile').click()">
+<p>📄 Haz clic para subir tu guion (PDF)</p>
+<input type="file" id="pdfFile" accept=".pdf">
+</div>
+<div id="uploadStatus"></div>
+</div>
+<div id="step2" class="step">
+<h2>Personajes del guion</h2>
+<div class="info">Asigna una voz a cada personaje</div>
+<div id="characterList" class="character-list"></div>
+<button onclick="startRehearsal()">Iniciar ensayo</button>
+</div>
+<div id="step3" class="step">
+<div class="progress"><span id="progressText">Línea 1 de X</span></div>
+<div class="line-display">
+<div class="character-name" id="currentCharacter"></div>
+<div class="dialogue" id="currentDialogue"></div>
+</div>
+<button class="mic-button" id="micBtn" onclick="toggleMic()">🎤</button>
+<div class="info">Presiona el micrófono y di tu línea</div>
+<audio id="audioPlayer" style="display:none"></audio>
+</div>
+</div>
+<script>
+const API='/api';
+let scriptData=null;
+let rehearsalSession=null;
+let isRecording=false;
+let mediaRecorder=null;
+let audioChunks=[];
+let currentLineIndex=0;
+document.getElementById('pdfFile').addEventListener('change',async(e)=>{
+const file=e.target.files[0];
+if(!file)return;
+const status=document.getElementById('uploadStatus');
+status.innerHTML='<div class="info">⏳ Procesando guion...</div>';
+const formData=new FormData();
+formData.append('script',file);
+try{
+const res=await fetch(API+'/upload-script',{method:'POST',body:formData});
+const data=await res.json();
+if(data.success){
+scriptData=data.script;
+status.innerHTML='<div class="info">✅ Guion cargado: '+data.script.totalLines+' líneas</div>';
+showCharacterSetup();
+}else{
+status.innerHTML='<div class="info">❌ Error: '+data.error+'</div>';
+}
+}catch(err){
+status.innerHTML='<div class="info">❌ Error al subir el archivo</div>';
+}
+});
+function showCharacterSetup(){
+const list=document.getElementById('characterList');
+const voices=['alloy','echo','fable','onyx','nova','shimmer'];
+list.innerHTML=scriptData.characters.map((char,i)=>`
+<div class="character-item">
+<span>${char}</span>
+<select id="voice_${i}">
+${voices.map(v=>`<option value="${v}"${i%6===voices.indexOf(v)?' selected':''}>${v}</option>`).join('')}
+</select>
+</div>
+`).join('');
+document.getElementById('step1').classList.remove('active');
+document.getElementById('step2').classList.add('active');
+}
+async function startRehearsal(){
+const characterVoices={};
+scriptData.characters.forEach((char,i)=>{
+characterVoices[char]=document.getElementById('voice_'+i).value;
+});
+try{
+const res=await fetch(API+'/setup-rehearsal',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({characterVoices})
+});
+rehearsalSession=await res.json();
+if(rehearsalSession.success){
+document.getElementById('step2').classList.remove('active');
+document.getElementById('step3').classList.add('active');
+loadNextLine();
+}
+}catch(err){
+alert('Error al iniciar ensayo');
+}
+}
+async function loadNextLine(){
+try{
+const res=await fetch(API+'/next-line');
+const data=await res.json();
+if(data.done){
+alert('¡Ensayo completado! 🎉');
+window.location.reload();
+return;
+}
+document.getElementById('currentCharacter').textContent=data.line.character;
+document.getElementById('currentDialogue').textContent=data.line.dialogue;
+document.getElementById('progressText').textContent=`Línea ${data.lineNumber} de ${scriptData.totalLines}`;
+currentLineIndex=data.lineNumber;
+playAILine(data.line.dialogue,data.line.character);
+}catch(err){
+alert('Error al cargar línea');
+}
+}
+async function playAILine(text,character){
+try{
+const res=await fetch(API+'/generate-audio',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({text,character})
+});
+const audioBlob=await res.blob();
+const audioUrl=URL.createObjectURL(audioBlob);
+const audio=document.getElementById('audioPlayer');
+audio.src=audioUrl;
+audio.play();
+}catch(err){
+console.error('Error reproduciendo audio:',err);
+}
+}
+async function toggleMic(){
+if(!isRecording){
+startRecording();
+}else{
+stopRecording();
+}
+}
+async function startRecording(){
+try{
+const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+mediaRecorder=new MediaRecorder(stream);
+audioChunks=[];
+mediaRecorder.addEventListener('dataavailable',e=>{
+audioChunks.push(e.data);
+});
+mediaRecorder.addEventListener('stop',async()=>{
+const audioBlob=new Blob(audioChunks,{type:'audio/webm'});
+await analyzePerformance(audioBlob);
+});
+mediaRecorder.start();
+isRecording=true;
+const btn=document.getElementById('micBtn');
+btn.classList.add('recording');
+btn.textContent='⏸';
+}catch(err){
+alert('No se pudo acceder al micrófono');
+}
+}
+function stopRecording(){
+if(mediaRecorder&&mediaRecorder.state!=='inactive'){
+mediaRecorder.stop();
+mediaRecorder.stream.getTracks().forEach(track=>track.stop());
+isRecording=false;
+const btn=document.getElementById('micBtn');
+btn.classList.remove('recording');
+btn.textContent='🎤';
+}
+}
+async function analyzePerformance(audioBlob){
+try{
+const formData=new FormData();
+formData.append('audio',audioBlob,'recording.webm');
+const res=await fetch(API+'/transcribe',{method:'POST',body:formData});
+const data=await res.json();
+if(data.text){
+const expected=document.getElementById('currentDialogue').textContent;
+const character=document.getElementById('currentCharacter').textContent;
+const feedbackRes=await fetch(API+'/analyze-performance',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({userText:data.text,expectedText:expected,character})
+});
+const feedbackData=await feedbackRes.json();
+if(feedbackData.feedback){
+playFeedback(feedbackData.feedback);
+setTimeout(loadNextLine,3000);
+}
+}
+}catch(err){
+alert('Error analizando interpretación');
+}
+}
+async function playFeedback(text){
+try{
+const res=await fetch(API+'/generate-audio',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({text,character:'Director'})
+});
+const audioBlob=await res.blob();
+const audioUrl=URL.createObjectURL(audioBlob);
+const audio=document.getElementById('audioPlayer');
+audio.src=audioUrl;
+audio.play();
+}catch(err){
+console.error('Error reproduciendo feedback:',err);
+}
+}
+</script>
+</body>
+</html>
