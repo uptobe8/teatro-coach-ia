@@ -195,7 +195,5 @@ app.get('/api/next-line', (req, res) => {
   res.json({ line, lineNumber: currentSession.currentLine });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🎭 Teatro Coach IA corriendo en puerto ${PORT}`);
-});
+// Export for Vercel serverless
+module.exports = app;
